@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard de Administrador</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f2f5;
+      }
+      .dashboard {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .logout-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+      }
+      .admin-controls {
+        margin-top: 20px;
+      }
+      .admin-controls button {
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        margin: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <button class="logout-btn" id="logout">Cerrar Sesión</button>
+      <h1>Dashboard de Administrador</h1>
+      <p>Bienvenido, <%= username %></p>
+      <p>Esta es la vista exclusiva para administradores.</p>
+
+      <div class="admin-controls">
+        <h2>Controles de Administración</h2>
+        <button>Gestionar Usuarios</button>
+        <button>Configuración del Sistema</button>
+        <button>Informes</button>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("logout").addEventListener("click", async () => {
+        try {
+          const response = await fetch("/auth/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            // Redirigir al login después de cerrar sesión
+            window.location.href = "/";
+          } else {
+            const data = await response.json();
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error("Error al cerrar sesión:", error);
+          alert("Ocurrió un error al cerrar sesión");
+        }
+      });
+    </script>
+  </body>
+</html>

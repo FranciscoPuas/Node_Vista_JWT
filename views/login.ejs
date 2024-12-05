@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Iniciar Sesión</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f2f5;
+      }
+      .login-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+      }
+      .login-form {
+        display: flex;
+        flex-direction: column;
+      }
+      .login-form input {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .login-form button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .error {
+        color: red;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <form class="login-form" action="/auth/login" method="POST">
+        <h2>Iniciar Sesión</h2>
+        <% if (error) { %>
+        <div class="error"><%= error %></div>
+        <% } %>
+        <input
+          type="text"
+          name="username"
+          placeholder="Nombre de usuario"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Contraseña"
+          required
+        />
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </div>
+    <script>
+      // Gestionar respuesta de login via AJAX
+      document
+        .querySelector(".login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const form = e.target;
+          const formData = new FormData(form);
+
+          try {
+            const response = await fetch("/auth/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: formData.get("username"),
+                password: formData.get("password"),
+              }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // Redirigir según el rol
+              if (data.role === "admin") {
+                window.location.href = "/admin-dashboard";
+              } else {
+                window.location.href = "/user-dashboard";
+              }
+            } else {
+              // Mostrar error
+              alert(data.message);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Ocurrió un error al iniciar sesión");
+          }
+        });
+    </script>
+  </body>
+</html>
